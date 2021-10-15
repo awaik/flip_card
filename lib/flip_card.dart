@@ -46,10 +46,9 @@ typedef void BoolCallback(bool isFront);
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
-  final Animation<double>? animation;
+  final Animation<double> animation;
 
   /// The amount of milliseconds a turn animation will take.
-  final int speed;
   final FlipDirection direction;
   final VoidCallback? onFlip;
   final BoolCallback? onFlipDone;
@@ -83,20 +82,19 @@ class FlipCard extends StatefulWidget {
 
   final Alignment alignment;
 
-  const FlipCard({
-    Key? key,
-    required this.front,
-    required this.back,
-    this.speed = 500,
-    this.animation,
-    this.onFlip,
-    this.onFlipDone,
-    this.direction = FlipDirection.HORIZONTAL,
-    this.controller,
-    this.flipOnTouch = true,
-    this.alignment = Alignment.center,
-    this.fill = Fill.none,
-  }) : super(key: key);
+  const FlipCard(
+      {Key? key,
+      required this.front,
+      required this.back,
+      required this.animation,
+      this.onFlip,
+      this.onFlipDone,
+      this.direction = FlipDirection.HORIZONTAL,
+      this.controller,
+      this.flipOnTouch = true,
+      this.alignment = Alignment.center,
+      this.fill = Fill.none})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -104,9 +102,7 @@ class FlipCard extends StatefulWidget {
   }
 }
 
-class FlipCardState extends State<FlipCard>
-    with SingleTickerProviderStateMixin {
-  AnimationController? controller;
+class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
   Animation<double>? _frontRotation;
   Animation<double>? _backRotation;
 
@@ -115,13 +111,10 @@ class FlipCardState extends State<FlipCard>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-        duration: Duration(milliseconds: widget.speed), vsync: this);
     _frontRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2)
-              .chain(CurveTween(curve: Curves.easeIn)),
+          tween: Tween(begin: 0.0, end: pi / 2).chain(CurveTween(curve: Curves.easeIn)),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
@@ -129,7 +122,7 @@ class FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
       ],
-    ).animate(widget.animation != null ? widget.animation! : controller!);
+    ).animate(widget.animation);
     _backRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
@@ -137,21 +130,11 @@ class FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
+          tween: Tween(begin: -pi / 2, end: 0.0).chain(CurveTween(curve: Curves.easeOut)),
           weight: 50.0,
         ),
       ],
-    ).animate(widget.animation != null ? widget.animation! : controller!);
-    controller!.addStatusListener((status) {
-      if (status == AnimationStatus.completed ||
-          status == AnimationStatus.dismissed) {
-        if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
-        setState(() {
-          isFront = !isFront;
-        });
-      }
-    });
+    ).animate(widget.animation);
 
     widget.controller?.state = this;
   }
@@ -159,13 +142,6 @@ class FlipCardState extends State<FlipCard>
   void toggleCard() {
     if (widget.onFlip != null) {
       widget.onFlip!();
-    }
-
-    controller!.duration = Duration(milliseconds: widget.speed);
-    if (isFront) {
-      controller!.forward();
-    } else {
-      controller!.reverse();
     }
   }
 
@@ -217,4 +193,5 @@ class FlipCardState extends State<FlipCard>
 }
 
 Widget _fill(Widget child) => Positioned.fill(child: child);
+
 Widget _noop(Widget child) => child;
