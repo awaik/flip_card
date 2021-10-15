@@ -46,6 +46,7 @@ typedef void BoolCallback(bool isFront);
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
+  final Animation<double>? animation;
 
   /// The amount of milliseconds a turn animation will take.
   final int speed;
@@ -87,6 +88,7 @@ class FlipCard extends StatefulWidget {
     required this.front,
     required this.back,
     this.speed = 500,
+    this.animation,
     this.onFlip,
     this.onFlipDone,
     this.direction = FlipDirection.HORIZONTAL,
@@ -127,7 +129,7 @@ class FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
       ],
-    ).animate(controller!);
+    ).animate(widget.animation != null ? widget.animation! : controller!);
     _backRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
@@ -140,7 +142,7 @@ class FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
       ],
-    ).animate(controller!);
+    ).animate(widget.animation != null ? widget.animation! : controller!);
     controller!.addStatusListener((status) {
       if (status == AnimationStatus.completed ||
           status == AnimationStatus.dismissed) {
