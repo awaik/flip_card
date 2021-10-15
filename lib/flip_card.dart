@@ -143,17 +143,17 @@ class FlipCardState extends State<FlipCard>
         ),
       ],
     ).animate(widget.animation);
-    // controller!.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed ||
-    //       status == AnimationStatus.dismissed) {
-    //     if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
-    //     setState(() {
-    //       isFront = !isFront;
-    //     });
-    //   }
-    // });
+    controller!.addStatusListener((status) {
+      if (status == AnimationStatus.completed ||
+          status == AnimationStatus.dismissed) {
+        if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
+        setState(() {
+          isFront = !isFront;
+        });
+      }
+    });
 
-    // widget.controller?.state = this;
+    widget.controller?.state = this;
   }
 
   void toggleCard() {
@@ -171,7 +171,6 @@ class FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
-    print('++++++++++++++++++++++++++++++11 -- ${widget.animation.value} -- ${_frontRotation?.value} - ${_backRotation?.value}');
     final frontPositioning = widget.fill == Fill.fillFront ? _fill : _noop;
     final backPositioning = widget.fill == Fill.fillBack ? _fill : _noop;
 
